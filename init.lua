@@ -375,7 +375,22 @@ require('lazy').setup({
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
-
+  -- Undo Tree
+  {
+    'mbbill/undotree',
+    event = 'VimEnter',
+    config = function()
+      vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = '[U]ndo Tree Toggle' })
+    end,
+  },
+  -- Fugitive
+  {
+    'tpope/vim-fugitive',
+    event = 'VimEnter',
+    config = function()
+      vim.keymap.set('n', '<leader>gs', vim.cmd.Git, { desc = '[G]et [S]tatus' })
+    end,
+  },
   -- LSP Plugins
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
