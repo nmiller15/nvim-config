@@ -11,6 +11,7 @@ vim.g.have_nerd_font = true
 
 -- Make line numbers default
 vim.o.number = true
+vim.o.wrap = false
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 vim.o.relativenumber = true
@@ -818,6 +819,7 @@ require('lazy').setup({
         styles = {
           comments = { italic = false }, -- Disable italics in comments
         },
+        transparent = true,
       }
 
       -- Load the colorscheme here.
@@ -873,7 +875,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'c_sharp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -930,8 +932,12 @@ require('lazy').setup({
       harpoon:setup()
       -- REQUIRED
 
-      vim.keymap.set('n', '<leader>a', function() harpoon:list():add() end, {desc = '[A]dd to Harpoon'})
-      vim.keymap.set('n', '<C-e>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+      vim.keymap.set('n', '<leader>a', function()
+        harpoon:list():add()
+      end, { desc = '[A]dd to Harpoon' })
+      vim.keymap.set('n', '<C-e>', function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+      end)
       vim.keymap.set('n', '<C-h>', function()
         harpoon:list():select(1)
       end)
