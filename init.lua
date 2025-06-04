@@ -69,7 +69,9 @@ vim.o.inccommand = 'split'
 
 -- Show which line your cursor is on
 vim.o.cursorline = true
-
+vim.o.expandtab = true
+vim.opt.smarttab = true
+vim.opt.shiftwidth = 4 -- Indentation level = 4 spaces
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
@@ -134,6 +136,20 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Auto move brackets in cs files
+vim.api.nvim_create_autocmd('FileType', {
+  desc = 'Close brackets in C# style',
+  pattern = 'cs',
+  callback = function()
+    vim.keymap.set('i', '{<CR>', '{<CR>}<Esc>O', { buffer = true, noremap = true })
+  end,
+})
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = '*.cs',
+  callback = function()
+    vim.lsp.buf.format()
+  end,
+})
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -412,7 +428,15 @@ require('lazy').setup({
       -- Automatically install LSPs and related tools to stdpath for Neovim
       -- Mason must be loaded before its dependents so we need to set it up here.
       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-      { 'mason-org/mason.nvim', opts = {} },
+      {
+        'mason-org/mason.nvim',
+        opts = {
+          registries = {
+            'github:mason-org/mason-registry',
+            'github:Crashdummyy/mason-registry',
+          },
+        },
+      },
       'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
@@ -613,6 +637,23 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
+        csharp_ls = {
+          settings = {
+            inlayHints = {
+              enableForTypes = true,
+              enableForImplicitVariableTypes = true,
+              enableForLambdaParameterTypes = true,
+              enableForImplicitObjectCreation = true,
+            },
+            codeLens = {
+              enableReferences = true,
+            },
+            completion = {
+              showItemsFromUnimportedNamespaces = true,
+              showNameSuggestions = true,
+            },
+          },
+        },
 
         lua_ls = {
           -- cmd = { ... },
@@ -665,7 +706,15 @@ require('lazy').setup({
       }
     end,
   },
-
+  { -- Roslyn Plugin for .NET API support
+    'seblyng/roslyn.nvim',
+    ft = 'cs',
+    ---@module 'roslyn.config'
+    ---@type RoslynNvimConfig
+    opts = {
+      -- your configuration comes here; leave empty for default settings
+    },
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -729,13 +778,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          'rafamadriz/friendly-snippets',
         },
+        config = function()
+          require('luasnip.loaders.from_vscode').lazy_load()
+          require('luasnip.loaders.from_lua').load { paths = vim.fn.stdpath 'config' .. '/lua/snippets' }
+        end,
         opts = {},
       },
       'folke/lazydev.nvim',
