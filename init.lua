@@ -706,15 +706,15 @@ require('lazy').setup({
       }
     end,
   },
-  { -- Roslyn Plugin for .NET API support
-    'seblyng/roslyn.nvim',
-    ft = 'cs',
-    ---@module 'roslyn.config'
-    ---@type RoslynNvimConfig
-    opts = {
-      -- your configuration comes here; leave empty for default settings
-    },
-  },
+  -- { -- Roslyn Plugin for .NET API support
+  --   'seblyng/roslyn.nvim',
+  --   ft = 'cs',
+  --   ---@module 'roslyn.config'
+  --   ---@type RoslynNvimConfig
+  --   opts = {
+  --     -- your configuration comes here; leave empty for default settings
+  --   },
+  -- },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -761,7 +761,7 @@ require('lazy').setup({
     config = function()
       require('boilersharp').setup()
 
-      vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufReadPre', 'BufNewFile' }, {
+      vim.api.nvim_create_autocmd({ 'BufNewFile' }, {
         pattern = '*.cs',
         callback = function(args)
           local buf = args.buf
@@ -790,11 +790,11 @@ require('lazy').setup({
     'zbirenbaum/copilot.lua',
     event = 'InsertEnter',
     config = function()
-      require("copilot").setup({
+      require('copilot').setup {
         suggestion = { enabled = false },
         panel = { enabled = false },
-      }) 
-    end 
+      }
+    end,
   },
   {
     'giuxtaposition/blink-cmp-copilot',
@@ -858,6 +858,8 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
+        ['C-space>'] = { 'show' },
+        ['<Tab>'] = { 'accept' },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -873,6 +875,20 @@ require('lazy').setup({
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        list = {
+          selection = {
+            preselect = true,
+            auto_insert = true,
+          },
+        },
+        menu = {
+          draw = {
+            treesitter = { 'lsp' },
+          },
+        },
+        ghost_text = {
+          enabled = true,
+        },
       },
 
       sources = {
@@ -882,7 +898,7 @@ require('lazy').setup({
           copilot = {
             name = 'copilot',
             module = 'blink-cmp-copilot',
-            score_offset = 100,
+            score_offset = 200,
             async = true,
           },
         },
@@ -973,7 +989,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'c_sharp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'c_sharp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'razor', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
