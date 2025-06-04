@@ -790,8 +790,14 @@ require('lazy').setup({
     'zbirenbaum/copilot.lua',
     event = 'InsertEnter',
     config = function()
-      require('copilot').setup {}
-    end,
+      require("copilot").setup({
+        suggestion = { enabled = false },
+        panel = { enabled = false },
+      }) 
+    end 
+  },
+  {
+    'giuxtaposition/blink-cmp-copilot',
   },
   { -- Autocompletion
     'saghen/blink.cmp',
@@ -816,6 +822,7 @@ require('lazy').setup({
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
           'rafamadriz/friendly-snippets',
+          'giuxtaposition/blink-cmp-copilot',
         },
         config = function()
           require('luasnip.loaders.from_vscode').lazy_load()
@@ -869,9 +876,15 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev', 'copilot' },
+        default = { 'copilot', 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          copilot = {
+            name = 'copilot',
+            module = 'blink-cmp-copilot',
+            score_offset = 100,
+            async = true,
+          },
         },
       },
 
