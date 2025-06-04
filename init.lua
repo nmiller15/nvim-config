@@ -755,7 +755,44 @@ require('lazy').setup({
       },
     },
   },
+  { -- C# Boilerplate
+    'DestopLine/boilersharp.nvim',
+    event = 'BufWritePre',
+    config = function()
+      require('boilersharp').setup()
 
+      vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufReadPre', 'BufNewFile' }, {
+        pattern = '*.cs',
+        callback = function(args)
+          local buf = args.buf
+          if vim.b[buf].boilersharp_initialized then
+            return
+          end
+          vim.b[buf].boilersharp_initialized = true
+
+          -- Call the plugin function once per buffer
+          require('boilersharp').write_boilerplate()
+        end,
+      })
+    end,
+    keys = {
+      {
+        '<leader>bp',
+        function()
+          require('boilersharp').write_boilerplate()
+        end,
+        mode = 'n',
+        desc = 'Insert [B]oiler[p]late',
+      },
+    },
+  },
+  { -- Github Copilot
+    'zbirenbaum/copilot.lua',
+    event = 'InsertEnter',
+    config = function()
+      require('copilot').setup {}
+    end,
+  },
   { -- Autocompletion
     'saghen/blink.cmp',
     event = 'VimEnter',
@@ -782,7 +819,7 @@ require('lazy').setup({
         },
         config = function()
           require('luasnip.loaders.from_vscode').lazy_load()
-          require('luasnip.loaders.from_lua').load { paths = vim.fn.stdpath 'config' .. '/lua/snippets' }
+          -- require('luasnip.loaders.from_lua').load { paths = vim.fn.stdpath 'config' .. '/lua/snippets' }
         end,
         opts = {},
       },
@@ -832,7 +869,7 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'lsp', 'path', 'snippets', 'lazydev', 'copilot' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
         },
